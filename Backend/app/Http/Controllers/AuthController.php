@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Crypt;
-
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -219,13 +219,13 @@ class AuthController extends Controller
         $token = $user->createtoken('my_app_token')->plainTextToken;
         $tipo = $user->getRoleNames();
 
-      /*  $response = [
-            'status' => true,
-            'message' => 'Usuario creado correctamente',
-            'user' => $user,
-            'token' => $token,
-            'tipo' => $tipo,
-        ];*/
+        /*  $response = [
+              'status' => true,
+              'message' => 'Usuario creado correctamente',
+              'user' => $user,
+              'token' => $token,
+              'tipo' => $tipo,
+          ];*/
 
         $response = [
             'status' => true,
@@ -239,4 +239,56 @@ class AuthController extends Controller
 
         return response()->json($response, 201);
     }
+
+    /**
+     * Maneja la solicitud de inicio de sesión con Google.
+     *
+     * @return \Illuminate\Http\JsonResponse - Una respuesta JSON que contiene el token de acceso generado por Google.
+     */
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+    }
+
+    /**
+     * Maneja la respuesta de Google después del inicio de sesión.
+     *
+     * @return \Illuminate\Http\JsonResponse - Una respuesta JSON que contiene el token de acceso generado por Google.
+     */
+    public function handleGoogleCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        // Verifica si el usuario ya está en la base de datos
+        $existingUser = User::where('email', $user->email)->first();
+
+        // Si el usuario no existe, créalo como particular con los campos por defecto
+        if (!$existingUser) {
+            $newUser = User::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'municipality_id' => 0, // Establece el municipality_id por defecto
+                'username' => $user->name . '.Google', // Crea un username basado en el nombre de usuario de Google
+                // Puedes añadir más campos por defecto si son necesarios
+            ]);
+
+            // Asigna el rol de 'customer' al nuevo usuario
+            $newUser->assignRole('customer');
+
+            // Autentica al nuevo usuario
+            $token = Auth::login($newUser);
+        } else {
+            // Si el usuario ya existe, autentícalo
+            $token = Auth::login($existingUser);
+        }
+
+        return response()->json(['token' => $token]);
+    }
+
+
 }
+

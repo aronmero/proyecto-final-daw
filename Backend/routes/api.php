@@ -68,3 +68,6 @@ Route::apiResource('municipality', MunicipalitiesController::class)->only('index
 Route::apiResource('category', CategoryController::class)->only('index');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+//gogle login 
+Route::post('/login/google', [AuthController::class, 'redirectToGoogle']);
+Route::post('/login/google/callback', [AuthController::class, 'handleGoogleCallback']);
