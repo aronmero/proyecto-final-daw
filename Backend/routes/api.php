@@ -16,7 +16,7 @@ use App\Http\Controllers\UsersController;
 use App\Models\Follower;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use Laravel\Socialite\Facades\Socialite;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -68,6 +68,14 @@ Route::apiResource('municipality', MunicipalitiesController::class)->only('index
 Route::apiResource('category', CategoryController::class)->only('index');
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+
+
 //gogle login 
-Route::post('/login/google', [AuthController::class, 'redirectToGoogle']);
-Route::post('/login/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/login-google', function () {
+    return Socialite::driver('google')->redirect();
+});
+ 
+Route::get('/google-callback', function () {
+    $user = Socialite::driver('google')->user();
+    dd($user);
+});
