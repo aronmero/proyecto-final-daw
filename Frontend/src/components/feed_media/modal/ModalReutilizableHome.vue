@@ -5,8 +5,8 @@ import { borrar_comentario } from '../../../Api/home/comentarios';
 const props = defineProps({
     info: Object,
     options: Array,
-    status: Boolean,
-    handler: Function
+    handler: Function,
+    refresh: Function
 });
 const user = JSON.parse(sessionStorage.getItem("usuario"));
 const username = user.usuario.username;
@@ -21,7 +21,8 @@ if (props.info.username != username && props.options[0].name == "Borrar Comentar
 async function deleteComentario(id) {
     const response = await borrar_comentario(id);
     if (response.status) {
-        router.go();
+        //router.go();
+        props.refresh();
     }
 }
 
@@ -42,6 +43,7 @@ const estilos = {
 const redirect = (url) => {
     router.push(url);
 }
+
 
 </script>
 <template>

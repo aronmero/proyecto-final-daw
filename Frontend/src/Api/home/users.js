@@ -33,7 +33,7 @@ export const obtener_datos_usuario = async (username) => {
         const user = JSON.parse(sessionStorage.getItem("usuario"));
         const token = user.usuario.token;
     
-        let data = await fetch(`${urlApi}/api/follower`, options)
+        let data = await fetch(`${urlApi}/api/follows`, options)
         .then(res => res.json())
         .then(res => res);
         

@@ -12,20 +12,15 @@
     const hoy = new Date();
     let dia = exportar_dia(hoy);
 
-
     const searchParams = new URLSearchParams(window.location.search);
     const query = searchParams.get('q');
 
-    
     if(query) filtrar_por_fecha(query);
-
-
     const posts_request = await obtener_posts_municipios();
     const posts = posts_request.data;
 
     const municipios_req = await obtener_municipios();
     const municipios = municipios_req.data;
-    //console.log(posts);
   
     const filtrar_por_fecha = (date) => {
         let cards = Array.from(document.getElementsByClassName('card'));
@@ -51,7 +46,6 @@
    
 </template>
 <style scoped lang="scss">
-    /* borrar cuando se pueda corregir el grid */
    .flexible {
     align-items: center;
    }

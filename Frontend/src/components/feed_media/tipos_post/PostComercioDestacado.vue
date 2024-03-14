@@ -110,6 +110,7 @@ const abrirComentariosLanding = () => {
 
 }
 
+
 </script>
 <template>
     <article  :class="` post ${estilos.post} relative`" ref="post_reference"
@@ -192,11 +193,11 @@ const abrirComentariosLanding = () => {
             </span>
 
             <!-- Comentarios en landing -->
-            <div class=" comentarios m-[20px_0px] flex flex-col">
+            <div class=" comentarios m-[20px_0px] flex flex-col ">
                 <b class=" flex ">Comentarios 
-                    <button  class="shadow-sm" @click="abrirComentariosLanding" > 
-                        <img class="shadow-none" v-if="!comentariosPadre" :src="DownSVG" alt="">
-                        <img class="shadow-none" v-if="comentariosPadre" :src="UpSVG" alt="">
+                    <button  class="bg-[white] overflow-hidden " @click="abrirComentariosLanding" > 
+                        <img v-if="!comentariosPadre" :src="DownSVG" alt="">
+                        <img v-if="comentariosPadre" :src="UpSVG" alt="">
                     </button>
                 </b>
                 <ComentariosLanding v-if="comentariosPadre" :post="post"/>

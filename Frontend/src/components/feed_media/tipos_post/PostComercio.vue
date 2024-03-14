@@ -26,19 +26,17 @@ import { share } from '@/components/feed_media/helpers/share.js';
 import { datetranslatesql } from './../helpers/datetranslate.js'
 import router from '../../../router';
 
-import { en_favoritos, obtener_favoritos, purgarFavoritos } from '../helpers/favoritos';
+import {obtener_favoritos } from '../helpers/favoritos';
 
 import ComentariosLanding from '../widgets/ComentariosLanding.vue';
 import BotonSpeaker from '../widgets/BotonSpeaker.vue';
 
-//purgarFavoritos();
-
 const props = defineProps({
     post: Object,
     tipo: String,
-    abrirComentarios: Function
+    abrirComentarios: Function,
+    esSeguido: Boolean
 });
-
 
 const post = ref(props.post);
 const post_reference = ref({dataset: {favorito:false}});
@@ -63,8 +61,6 @@ const abrirModal = () => {
     }
 }
 
-
-
 /**
  * Redirecciona a la url destino 
  * */
@@ -74,8 +70,8 @@ const redirect = (url) => {
 
 /** Dependiendo del tipo de post, carga un icono  */
 const tipo = post.value.name;
-let IconoTipo = "";
 
+let IconoTipo = "";
 if (tipo == 'Post') IconoTipo = TipoOferta; // 1 Post
 if (tipo == 'Evento') IconoTipo = TipoEvento; // 2 Event
 
@@ -97,8 +93,9 @@ const aniadir_favorito = (item) => {
 }
 
 const comentariosPadre = ref(false);
-
-
+/**
+ * Abre los comentarios de la sección de landing 
+ * */
 const abrirComentariosLanding = () => {
     if(!comentariosPadre.value) {
         comentariosPadre.value = true;
@@ -116,8 +113,7 @@ const abrirComentariosLanding = () => {
         :data-favorito="(favoritos.indexOf(post.title) != -1) ? 'true' : 'false'">
          <!-- Contenedor del header del post -->
          <div class=" post-header w-[100%] h-[60px] flex items-center ">
-            <div
-                class=" avatar-wrapper w-[50px] min-w-[50px] min-h-[50px] h-[50px] rounded-full overflow-hidden mr-2">
+            <div class=" avatar-wrapper w-[50px] min-w-[50px] min-h-[50px] h-[50px] rounded-full overflow-hidden mr-2">
                 <img @click="redirect(`perfil/${post.username}`)" loading="lazy"
                     class=" cursor-pointer w-[100%] h-[100%] object-cover " :src="post.avatar" alt="avatar_usuario">
             </div>
@@ -132,6 +128,11 @@ const abrirComentariosLanding = () => {
                         :title="post.avg" loading="lazy" />
                     <small>({{ post.avg.toFixed(2) }})</small>
                 </button>
+                <small v-if="props.esSeguido" class="flex items-center">
+                    <img title="Busqueda" src="/assets/icons/following.svg" class="max-w-[30px] max-h-[30px] hidden lg:block"
+                alt="Siguiendo" />
+                    Seguido
+                </small>
             </div>
             <button @click="() => abrirModal(post.post_id)" class="mr-4">
                 <img :src="MoreSVG" alt="dots">
@@ -190,7 +191,7 @@ const abrirComentariosLanding = () => {
             <!-- Comentarios en landing -->
             <div class=" comentarios m-[20px_0px] flex flex-col">
                 <b class=" flex ">Comentarios 
-                    <button  class="shadow-sm" @click="abrirComentariosLanding" > 
+                    <button  class="rounded-full  p-[0px_2px] overflow-hidden " @click="abrirComentariosLanding" > 
                         <img class="shadow-none" v-if="!comentariosPadre" :src="DownSVG" alt="">
                         <img class="shadow-none" v-if="comentariosPadre" :src="UpSVG" alt="">
                     </button>

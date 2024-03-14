@@ -12,7 +12,8 @@ import PostAyuntamiento from './PostAyuntamiento.vue';
 
 const props = defineProps({
     post: Object,
-    tipo: String
+    tipo: String, 
+    seguidos: Object
 });
 
 
@@ -20,6 +21,15 @@ const post = ref(props.post);
 const post_reference = ref({ dataset: { favorito: false } });
 const modalHandler = ref(false);
 const modal = ref(null);
+
+const esSeguido = ref(false);
+console.log(props.seguidos);
+console.log(post);
+props.seguidos.forEach(seguido => {
+    if(seguido.username == post.value.username) esSeguido.value = true;
+});
+
+console.log(esSeguido.value);
 
 const modal_comentarios = ref(null);
 /** Genero la referencia para abrir o cerrar el modal de comentarios */
@@ -50,7 +60,6 @@ let tipo_usuario = ref(post.userRol);
 
 /** referencia los comentarios */
 let comentarios = ref(null);
-
 
 /**
  * Abre el modal de comentarios
@@ -83,7 +92,6 @@ const { stop } = useIntersectionObserver(post_reference,
 )
 */
 
-
 </script>
 
 <template>
@@ -94,6 +102,7 @@ const { stop } = useIntersectionObserver(post_reference,
             v-if="post.userRol == 'commerce' && post.avg < 3.5"
             :post="post" 
             :tipo="tipo"
+            :esSeguido="esSeguido"
             :abrirComentarios="abrirComentarios"
         >
         </PostComercio>
@@ -103,6 +112,7 @@ const { stop } = useIntersectionObserver(post_reference,
             v-if="post.userRol == 'commerce' && post.avg >= 3.5" 
             :post="post" 
             :tipo="tipo"
+            :esSeguido="esSeguido"
             :abrirComentarios="abrirComentarios"
         ></PostComercioDestacado>
         <!-- Post Ayuntamiento -->
@@ -111,11 +121,12 @@ const { stop } = useIntersectionObserver(post_reference,
             v-if="post.userRol == 'ayuntamiento'" 
             :post="post" 
             :tipo="tipo"
+            :esSeguido="esSeguido"
             :abrirComentarios="abrirComentarios"
         >
         </PostAyuntamiento>
         <!-- El modal de comentarios -->
-         <Comentarios v-if="comentariosVisibles" :post="post" :handler="abrirComentarios" /> 
+        <Comentarios v-if="comentariosVisibles" :post="post" :handler="abrirComentarios" /> 
     </div>
 </template>
 

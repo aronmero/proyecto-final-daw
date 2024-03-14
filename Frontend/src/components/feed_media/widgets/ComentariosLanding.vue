@@ -89,8 +89,7 @@ const enviarComentarioPorSubmit = async (post_id, event) => {
             }
 
             antiSpamFunction();
-            comentarios_req = await obtener_comentarios(post.post_id);
-            comentarios.value = comentarios_req.comentarios;
+            refreshComentarios();
         }
     }
 };
@@ -105,8 +104,7 @@ const enviarComentarioPorClick = async (post_id, texto) => {
         }
     }
     antiSpamFunction();
-    comentarios_req = await obtener_comentarios(post.post_id);
-    comentarios.value = comentarios_req.comentarios;
+    refreshComentarios();
 };
 
 /**
@@ -131,7 +129,14 @@ const antiSpamFunction = () => {
         };
     }, 1000);
 }
+/**
+ * Refresca el valor de los comentarios 
+ * */
 
+const refreshComentarios = async () => {
+    let comentarios_req = await obtener_comentarios(post.post_id);
+    comentarios.value = comentarios_req.comentarios;
+}
 
 </script>
 
@@ -139,7 +144,7 @@ const antiSpamFunction = () => {
     <!-- El listado de comentarios -->
     <div ref="comentario_handler"
         class="comentarios  max-h-[500px]    overflow-y-scroll">
-            <ComentarioTiny v-if="comentarios.length >= 1" v-for="comentario in comentarios" :comentario="comentario" /> 
+            <ComentarioTiny v-if="comentarios.length >= 1" v-for="comentario in comentarios" :comentario="comentario" :refresh="refreshComentarios" /> 
             <ComentarioTiny v-else :comentario="{ content: 'No hay comentarios, ¡se el primero!' }" />
     </div>
 

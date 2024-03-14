@@ -10,6 +10,7 @@
 
 <template >
     <Header />
+
     <Grid>
         <template v-slot:Left  >
    

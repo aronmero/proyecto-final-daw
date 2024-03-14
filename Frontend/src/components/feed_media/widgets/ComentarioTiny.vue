@@ -4,11 +4,14 @@ import UserSVG from '@public/assets/icons/user.svg';
 import MoreSVG from '@public/assets/icons/ellipsis.svg';
 import DeleteSVG from '@public/assets/icons/delete.svg';
 import StarSVG from '@public/assets/icons/star.svg';
-import ModalReutilizable from '../modal/ModalReutilizable.vue';
+import ModalReutilizableHome from '../modal/ModalReutilizableHome.vue';
+import { datetranslatesql } from '../helpers/datetranslate';
 
 const props = defineProps({
-    comentario: Object
+    comentario: Object,
+    refresh: Function
 });
+
 const comentario = props.comentario;
 
 //const user = comentario.username;
@@ -38,7 +41,7 @@ const comentario = props.comentario;
     const opcionesModal = [
         {
             name: "Borrar Comentario",
-            action: `/comentario/${comentario.comment_id}/delete`,
+            action: ``,
             icon: DeleteSVG
         },
         {
@@ -59,13 +62,16 @@ const comentario = props.comentario;
     <div class="comentario w-[100%]  flex relative">
         <div class="left flex flex-col items-center justify-center mr-[30px] max-w-[100px]">
             <img class="w-[50px] h-[50px] rounded-full bg-slate-400 mr-[10px]" :src="comentario.avatar" alt="">
-            <b class=" username"> {{comentario.username}}</b>
+            <b class=" username whitespace-nowrap max-w-[100px] overflow-hidden text-ellipsis" :title="comentario.username"> {{comentario.username}}</b>
+            <small v-if="comentario.comment_creation != null">{{ datetranslatesql(comentario.comment_creation)
+            }}</small>
         </div>
         <span class="max-w-[80%]">{{ comentario.content}}</span>
         <button v-if="comentario.username" class="absolute right-0 "  @click="() => abrirModal()">
             <img :src="MoreSVG" alt="">
         </button>
-        <ModalReutilizable v-if="modalHandler" :options="opcionesModal" :info="comentario"
+
+        <ModalReutilizableHome v-if="modalHandler"  :info="comentario" :options="opcionesModal" :refresh="props.refresh"
             :handler="abrirModal" />
     </div>
 </template>
